@@ -629,7 +629,7 @@ function toggleCat(el, key) {
   }
 }
 
-function compressImage(file) {
+function stripExifAndCompressImage(file) {
   return new Promise((resolve) => {
     const img = new Image();
     const url = URL.createObjectURL(file);
@@ -642,6 +642,9 @@ function compressImage(file) {
       const canvas = document.createElement("canvas");
       canvas.width = w;
       canvas.height = h;
+
+      // Redrawing onto canvas creates a fresh image binary so original EXIF
+      // metadata like GPS/camera tags is not carried into the uploaded file.
       canvas.getContext("2d").drawImage(img, 0, 0, w, h);
       canvas.toBlob(
         (blob) =>
@@ -685,7 +688,7 @@ async function addFiles(fs) {
     .filter((f) => f.type.startsWith("image/"))
     .slice(0, 6 - upFiles.length);
   for (const f of eligible) {
-    const compressed = await compressImage(f);
+    const compressed = await stripExifAndCompressImage(f);
     if (upFiles.length < 6) upFiles.push(compressed);
   }
   renderPreviews();
