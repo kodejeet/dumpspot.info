@@ -1306,9 +1306,11 @@ textarea {
 }
 
 .uparea small {
+  display: block;
   font-size: .68rem;
   color: var(--mu);
   opacity: .6;
+  margin-top: .18rem;
 }
 
 .pgrid {
